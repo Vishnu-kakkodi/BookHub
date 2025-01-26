@@ -27,10 +27,8 @@ const MESSAGES = {
       EMAIL_VERIFIED: "Email Verified",
       TUTOR_CREATED: 'Tutor created successfully',
       DEPARTMENT_CREATED: 'Department created successfully',
-      QUIZ_RESULT_ADDED: "Result Added",
       PROFILE_PHOTO_UPDATED: "Profile photo updated",
       PROFILE_UPDATED: "Profile updated",
-      ORDER_CREATED: "Order Created",
     },
   
     ERROR: {
