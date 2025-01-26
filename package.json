@@ -1,0 +1,19 @@
+{
+  "name": "bwm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start --prefix Backend\" \"npm run dev --prefix frontend\"",
+    "build": "npm run build --prefix Backend",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
