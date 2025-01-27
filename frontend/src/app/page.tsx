@@ -3,7 +3,6 @@
 import { Provider } from "react-redux";
 import { store } from "../store/index"; // Make sure the store is imported correctly
 import BookCard from "../components/BookCard";
-import { useState } from "react";
 import { useBookListQuery } from "@/store/slices/userSlice";
 
 export default function Home() {

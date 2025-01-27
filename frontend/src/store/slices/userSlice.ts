@@ -1,7 +1,7 @@
 
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { googleSign, ReviewResponse, User, UserLogin } from '../../types/userTypes';
+import {  User, UserLogin } from '../../types/userTypes';
 import { RootState } from '..';
 import { ApiResponse } from '../../types/responseType';
 
@@ -18,8 +18,7 @@ interface RegisterResponse {
 
 const baseQueryWithRole = fetchBaseQuery({
   baseUrl: 'http://localhost:5000/api',
-  prepareHeaders: (headers, { getState }) => {
-    const state = getState() as RootState;
+  prepareHeaders: (headers) => {
     
     let role: UserRole | null = 'user';
     if (role) {

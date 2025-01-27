@@ -8,9 +8,9 @@ import useDebouncedValue from "@/hooks/debounceHook";
 
 export default function HomePage() {
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(4);
+    // const [limit, setLimit] = useState(4);
+    const limit = 1;
     const [search, setSearch] = useState('');
-    const [department, setDepartment] = useState('');
     const debouncedSearchTerm = useDebouncedValue(search, 1000);
 
 
@@ -28,11 +28,6 @@ export default function HomePage() {
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
         setPage(1); // Reset to first page on new search
-    };
-
-    const handleDepartmentFilter = (dept: string) => {
-        setDepartment(dept);
-        setPage(1);
     };
 
     return (

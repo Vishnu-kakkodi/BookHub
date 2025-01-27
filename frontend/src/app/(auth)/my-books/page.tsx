@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { useState } from 'react';
-import * as Yup from "yup";
 import { useBookDeleteMutation, useBookListQuery } from '../../../store/slices/userSlice';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
@@ -10,8 +9,10 @@ import BookEditModal from '@/components/BookEditModal';
 
 // My Books Section Component
 const MyBooksSection = () => {
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(8);
+    // const [page, setPage] = useState(1);
+    // const [limit, setLimit] = useState(8);
+    const page = 1;
+    const limit = 4;
     const [bookDelete] = useBookDeleteMutation();
     const [bookToEdit, setBookToEdit] = useState<any>(null);
 

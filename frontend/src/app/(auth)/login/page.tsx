@@ -24,10 +24,8 @@ import { setCredentials } from '@/store/slices/authSlice';
 
 
 const LoginPage = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
   const [login] = useLoginMutation();
   const dispatch = useDispatch();
-  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [googleSign] = useGoogleSignMutation();
   const router = useRouter()
 
@@ -72,7 +70,6 @@ const LoginPage = () => {
       if (email) {
         const response = await googleSign({ email, userName, phoneNumber });
         console.log(response);
-        setUserEmail(email);
         localStorage.setItem('email', email);
         toast.success('Google sign-in successful!');
         dispatch(setCredentials({ ...response.data?.data }));
@@ -155,7 +152,7 @@ const LoginPage = () => {
           >
                             <FcGoogle size={20} className='mr-5' />
 
-            {isSignUp ? 'Sign Up with Google' : 'Login with Google'}
+            Login with Google
           </button>
 
           <button 
