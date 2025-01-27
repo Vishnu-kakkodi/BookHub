@@ -15,9 +15,7 @@ export default function HomePage() {
 
 
     const {
-        data: bookData,
-        isLoading,
-        error
+        data: bookData
     } = useBookListQuery({ 
         page, 
         limit, 
@@ -25,7 +23,6 @@ export default function HomePage() {
     });
 
     const books = bookData?.book || [];
-    const totalBooks = bookData?.total || 0;
     const totalPages = bookData?.totalPages || 1;
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

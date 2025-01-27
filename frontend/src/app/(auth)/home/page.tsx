@@ -3,78 +3,21 @@
 import { Provider } from "react-redux";
 import { store } from "../../../store/index"; // Make sure the store is imported correctly
 import BookCard from "../../../components/BookCard";
-import { useState } from "react";
 import { useBookListQuery } from "@/store/slices/userSlice";
 
 export default function HomePage() {
-  const book = [
-    {
-      title: "The Great Gatsby",
-      isbn: "9780743273565",
-      author: "F. Scott Fitzgerald",
-      imageUrl: "https://picsum.photos/seed/gatsby/200/300",
-    },
-    {
-      title: "To Kill a Mockingbird",
-      isbn: "9780446310789",
-      author: "Harper Lee",
-      imageUrl: "https://picsum.photos/seed/mockingbird/200/300",
-    },
-    {
-      title: "1984",
-      isbn: "9780451524935",
-      author: "George Orwell",
-      imageUrl: "https://picsum.photos/seed/1984/200/300",
-    },
-    {
-      title: "Pride and Prejudice",
-      isbn: "9780141439518",
-      author: "Jane Austen",
-      imageUrl: "https://picsum.photos/seed/pride/200/300",
-    },
-    {
-      title: "The Catcher in the Rye",
-      isbn: "9780316769174",
-      author: "J.D. Salinger",
-      imageUrl: "https://picsum.photos/seed/catcher/200/300",
-    },
-    {
-      title: "The Hobbit",
-      isbn: "9780547928227",
-      author: "J.R.R. Tolkien",
-      imageUrl: "https://picsum.photos/seed/hobbit/200/300",
-    },
-    {
-      title: "Brave New World",
-      isbn: "9780060850524",
-      author: "Aldous Huxley",
-      imageUrl: "https://picsum.photos/seed/brave/200/300",
-    },
-    {
-      title: "The Alchemist",
-      isbn: "9780062315007",
-      author: "Paulo Coelho",
-      imageUrl: "https://picsum.photos/seed/alchemist/200/300",
-    },
-    {
-      title: "The Little Prince",
-      isbn: "9780156012195",
-      author: "Antoine de Saint-Exupéry",
-      imageUrl: "https://picsum.photos/seed/prince/200/300",
-    },
-  ];
 
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(8);
+
+    // const [page, setPage] = useState(1);
+    // const [limit, setLimit] = useState(8);
+    const limit = 8;
+    const page = 1;
     
     const {
       data: bookData,
-      isLoading,
-      error
     } = useBookListQuery({ page, limit });
   
     const books = bookData?.book || [];
-    const totalBooks = bookData?.total || 0;
   
 
   return (

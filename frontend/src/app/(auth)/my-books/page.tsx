@@ -1,13 +1,8 @@
 'use client';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useState } from 'react';
-import { User, Book, PlusCircle } from 'lucide-react';
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import { useBookDeleteMutation, useBookListQuery, useCreateBookMutation } from '../../../store/slices/userSlice';
-import { hydrateUser } from '@/store/slices/authSlice';
-import { useDispatch } from 'react-redux';
-import { useAppSelector } from '@/store/hook';
+import { useBookDeleteMutation, useBookListQuery } from '../../../store/slices/userSlice';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import BookEditModal from '@/components/BookEditModal';
@@ -29,7 +24,6 @@ const MyBooksSection = () => {
     } = useBookListQuery({ page, limit });
 
     const books = bookData?.book || [];
-    const totalBooks = bookData?.total || 0;
 
     if (isLoading) return <div>Loading books...</div>;
     if (error) return <div>Error loading books</div>;

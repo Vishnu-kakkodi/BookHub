@@ -1,28 +1,25 @@
 "use client";
 
-import { Provider, useSelector } from "react-redux";
-import { RootState, store } from "../store/index"; // Make sure the store is imported correctly
+import { Provider } from "react-redux";
+import { store } from "../store/index"; // Make sure the store is imported correctly
 import BookCard from "../components/BookCard";
 import { useState } from "react";
 import { useBookListQuery } from "@/store/slices/userSlice";
 
 export default function Home() {
 
-  const isUserAuthenticated = useSelector(
-    (state: RootState) => state.auth.isUserAuthenticated
-  );
 
-      const [page, setPage] = useState(1);
-      const [limit, setLimit] = useState(8);
+      // const [page, setPage] = useState(1);
+      // const [limit, setLimit] = useState(8);
+      const page = 1;
+      const limit = 4;
       
       const {
         data: bookData,
-        isLoading,
-        error
+
       } = useBookListQuery({ page, limit });
     
       const books = bookData?.book || [];
-      const totalBooks = bookData?.total || 0;
 
   return (
     <Provider store={store}>
