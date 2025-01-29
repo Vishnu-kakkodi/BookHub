@@ -2,7 +2,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import {  User, UserLogin } from '../../types/userTypes';
-import { RootState } from '..';
 import { ApiResponse } from '../../types/responseType';
 
 
