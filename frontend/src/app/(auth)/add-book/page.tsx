@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { useCreateBookMutation } from '../../../store/slices/userSlice';
-import { hydrateUser } from '@/store/slices/authSlice';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/store/hook';
+import withAuth from '@/hoc/withAuth';
 
 
 // Create Book Section Component
@@ -17,9 +17,9 @@ const CreateBookSection = () => {
   const userdata = useAppSelector((state) => state.auth.userInfo);
 
 
-  useEffect(() => {
-    dispatch(hydrateUser());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(hydrateUser());
+  // }, [dispatch]);
 
   const initialValues = {
     title: "",
@@ -239,4 +239,4 @@ const CreateBookSection = () => {
 };
 
 
-export default CreateBookSection
+export default withAuth(CreateBookSection)

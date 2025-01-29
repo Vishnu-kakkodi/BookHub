@@ -153,6 +153,16 @@ export const userSlice = createApi({
       providesTags: ['User'],
      }),
 
+     myBookList: builder.query({
+      query: ({ page = 1, limit = 4, search = '', filter='all', sort='newest', userId }) => ({
+        url: '/users/my-book-list',
+        params:{ page, limit, search, filter, sort, userId },
+        method: 'GET',
+        credentials: 'include'
+      }),
+      providesTags: ['User'],
+     }),
+
      bookDelete: builder.mutation<any, {bookId:any}>({
       query: ({bookId}) => ({
           url: `/users/book-delete/?bookId=${bookId}`,
@@ -172,6 +182,16 @@ export const userSlice = createApi({
       invalidatesTags: ['User'],
   }),
 
+  profilePhoto: builder.mutation<RegisterResponse, { body: FormData }>({
+    query: (payload) => ({
+      url: '/users/profile-photo',
+      method: 'POST',
+      credentials: 'include',
+      body: payload.body
+    }),
+    invalidatesTags: ['User'],
+  }),
+
     
 
   }),
@@ -185,7 +205,9 @@ export const
    useLoginMutation,
    useCreateBookMutation,
    useBookListQuery,
+   useMyBookListQuery,
    useBookDeleteMutation,
-   useUpdateBookMutation
+   useUpdateBookMutation,
+   useProfilePhotoMutation
   } = userSlice;
 

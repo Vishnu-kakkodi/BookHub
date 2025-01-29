@@ -15,6 +15,8 @@ const Controller = new controller(Service);
 
 
 router.get('/book-list',Controller.bookList.bind(Controller));
+router.get('/my-book-list',Controller.myBookList.bind(Controller));
+
 
 
 router.post('/signup', Controller.register.bind(Controller));
@@ -22,8 +24,11 @@ router.post('/login',Controller.login.bind(Controller));
 router.post('/googleSign',Controller.googleSign.bind(Controller));
 router.post('/create-book',upload.single('thumbnail'),Controller.createBook.bind(Controller));
 
+
 router.delete('/book-delete',Controller.bookDelete.bind(Controller));
 router.post('/book-update',Controller.updateBook.bind(Controller));
+router.post('/profile-photo',upload.single('profileImage'),Controller.profilePhoto.bind(Controller));
+
 
 
 

@@ -15,8 +15,9 @@ import { useRouter } from 'next/navigation';
 import { useGoogleSignMutation, useRegisterMutation } from '@/store/slices/userSlice';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '@/store/slices/authSlice';
+import withAuth from '@/hoc/withAuth';
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const router = useRouter();
   const [googleSign] = useGoogleSignMutation();
   const [register] = useRegisterMutation();
@@ -172,4 +173,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default withAuth(RegisterPage);

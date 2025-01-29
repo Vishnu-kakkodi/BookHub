@@ -20,6 +20,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '@/store/slices/authSlice';
+import withAuth from '@/hoc/withAuth';
 
 
 
@@ -168,4 +169,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default withAuth(LoginPage);

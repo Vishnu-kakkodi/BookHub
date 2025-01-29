@@ -1,7 +1,6 @@
 import { BaseRepository } from "./base.repository";
 import { UserModel } from "../modal/userModel";
 import { IUserDocument } from "../types/userType";
-import { HttpException } from "../middleware/error.middleware";
 import mongoose, { FilterQuery } from 'mongoose';
 import { IUserRepository } from "../interfaces/IUserRepository";
 
@@ -34,4 +33,14 @@ export class userRepository extends BaseRepository<IUserDocument> implements IUs
             throw error;
         }
     } 
+
+    async findById(userId : string): Promise<IUserDocument | null> { 
+        try {
+            const id = new mongoose.Types.ObjectId(userId)   
+            const user =  await this.model.findById({_id:id});
+            return user;      
+        } catch (error) {
+            throw error;
+        }
+    }
 }

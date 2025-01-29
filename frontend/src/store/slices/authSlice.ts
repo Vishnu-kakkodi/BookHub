@@ -12,9 +12,30 @@ interface AuthState {
   isUserAuthenticated: boolean;
 }
 
+const getFromStorage = (key: string) => {
+  const localItem = localStorage.getItem(key);
+  return localItem ? JSON.parse(localItem) : null;
+};
+
 const initialState: AuthState = {
-  userInfo: null, // Hydrated later
-  isUserAuthenticated: false,
+  userInfo: getFromStorage("userInfo"),
+  isUserAuthenticated: !!localStorage.getItem("userInfo"),
+};
+
+interface UpdateUserFieldPayload {
+  field: keyof UserInfo;
+  value: any;
+}
+
+
+
+const setToStorage = (key: string, value: any) => {
+  const stringValue = JSON.stringify(value);
+  localStorage.setItem(key, stringValue);
+};
+
+const removeFromStorage = (key: string) => {
+  localStorage.removeItem(key);
 };
 
 const authSlice = createSlice({
@@ -24,30 +45,35 @@ const authSlice = createSlice({
     setCredentials: (state, action: PayloadAction<UserInfo>) => {
       state.userInfo = action.payload;
       state.isUserAuthenticated = true;
-
-      if (typeof window !== "undefined") {
-        localStorage.setItem("userInfo", JSON.stringify(action.payload));
-      }
+      setToStorage("userInfo", action.payload);
     },
-    hydrateUser: (state) => {
-      if (typeof window !== "undefined") {
-        const userInfo = localStorage.getItem("userInfo");
-        if (userInfo) {
-          state.userInfo = JSON.parse(userInfo);
-          state.isUserAuthenticated = true;
-        }
-      }
-    },
+    // hydrateUser: (state) => {
+    //   if (typeof window !== "undefined") {
+    //     const userInfo = localStorage.getItem("userInfo");
+    //     if (userInfo) {
+    //       state.userInfo = JSON.parse(userInfo);
+    //       state.isUserAuthenticated = true;
+    //     }
+    //   }
+    // },
     userLogout: (state) => {
       state.userInfo = null;
       state.isUserAuthenticated = false;
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("userInfo");
+      removeFromStorage("userInfo");
+    },
+    updateUserField: (state, action: PayloadAction<UpdateUserFieldPayload>) => {
+      if (state.userInfo) {
+        const { field, value } = action.payload;
+        state.userInfo = {
+          ...state.userInfo,
+          [field]: value
+        };
+        setToStorage("userInfo", state.userInfo);
       }
     },
   },
 });
 
-export const { setCredentials, hydrateUser, userLogout } = authSlice.actions;
+export const { setCredentials, userLogout, updateUserField } = authSlice.actions;
 
 export default authSlice.reducer;

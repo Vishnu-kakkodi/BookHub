@@ -20,6 +20,8 @@ export type SearchQueryType = FilterQuery<{
 export interface IUserRepository extends IBaseRepository<IUserDocument>{
 
   findByEmail(email: string): Promise <IUserDocument | null >
+  findById(userId : string): Promise<IUserDocument | null>
+
 
 
 }

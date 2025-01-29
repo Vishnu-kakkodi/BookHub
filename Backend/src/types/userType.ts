@@ -15,6 +15,7 @@ export interface IUser extends BaseInterface{
     id:string;
     email: string;
     password: string;
+    profilePhoto?: string;
 }
 
 export type IUserDocument = IUser & Document;   

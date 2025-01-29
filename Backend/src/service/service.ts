@@ -5,10 +5,9 @@ import STATUS_CODES from '../constants/statusCode';
 import MESSAGES from '../constants/message';
 import { IService } from "../interfaces/IService";
 import { log } from "console";
-import { FilterQuery } from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import { IBookRepository } from "../interfaces/IBookRepository";
 import { IBookDocument } from "../types/bookType";
-import elasticClient from '../elasticConfig';
 import { Client, estypes } from '@elastic/elasticsearch';
 import { PasswordUtils } from "../utils/passwordUtils";
 
@@ -165,6 +164,37 @@ class Service implements IService {
         }
     }
 
+    async myBookList(page: number, limit: number, search: string, department: string, sort: string, userId: string): Promise<{ book: IBookDocument[]; total: number; }> {
+        try {
+            const skip = (page - 1) * limit;
+            const id = new mongoose.Types.ObjectId(userId)
+            let query: FilterQuery<any> = { userId: id };
+            let sortOptions: Record<string, 1 | -1> = {};
+    
+            if (search && search.trim() !== '') {
+                query.$or = [
+                    { title: { $regex: search, $options: 'i' } },
+                    { author: { $regex: search, $options: 'i' } }
+                ];
+            }
+    
+            switch (sort) {
+                case 'newest':
+                    sortOptions = { createdAt: -1 };
+                    break;
+                case 'oldest':
+                    sortOptions = { createdAt: 1 };
+                    break;
+                default:
+                    sortOptions = { createdAt: -1 };
+            }
+    
+            return await this.bookRepository.findbook(query, skip, limit, sortOptions);
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async bookDelete(bookId: string): Promise<void> {
         try {
           return await this.bookRepository.bookDelete(bookId);
@@ -198,6 +228,27 @@ class Service implements IService {
 
 
             return { ...user.toObject()};
+
+        } catch (error) {
+            throw error
+        }
+    }
+
+
+    async profilePhoto(userId: string, fileLocation: string): Promise<IUserDocument | null> {
+        try {
+            const user = await this.userRepository.findById(userId)
+            if (!user) {
+                throw new HttpException(STATUS_CODES.NOT_FOUND, MESSAGES.ERROR.USER_NOT_FOUND);
+            }
+
+            if (user) {
+                user.profilePhoto = fileLocation;
+                user.save();
+            }
+
+
+            return { ...user.toObject() };
 
         } catch (error) {
             throw error

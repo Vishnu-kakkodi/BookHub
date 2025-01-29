@@ -4,8 +4,11 @@ import { Provider } from "react-redux";
 import { store } from "../store/index"; // Make sure the store is imported correctly
 import BookCard from "../components/BookCard";
 import { useBookListQuery } from "@/store/slices/userSlice";
+import withAuth from "@/hoc/withAuth";
 
-export default function Home() {
+const Home = () => {
+
+
 
 
       // const [page, setPage] = useState(1);
@@ -21,6 +24,7 @@ export default function Home() {
       const books = bookData?.book || [];
 
   return (
+    
     <Provider store={store}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
@@ -44,3 +48,6 @@ export default function Home() {
     </Provider>
   );
 }
+
+
+export default withAuth(Home)

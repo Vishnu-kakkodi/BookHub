@@ -4,8 +4,10 @@ import { Provider } from "react-redux";
 import { store } from "../../../store/index"; // Make sure the store is imported correctly
 import BookCard from "../../../components/BookCard";
 import { useBookListQuery } from "@/store/slices/userSlice";
+import withAuth from "@/hoc/withAuth";
 
-export default function HomePage() {
+
+const HomePage = () =>{
 
 
     // const [page, setPage] = useState(1);
@@ -44,3 +46,6 @@ export default function HomePage() {
     </Provider>
   );
 }
+
+
+export default withAuth(HomePage);

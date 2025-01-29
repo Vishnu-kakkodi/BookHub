@@ -28,8 +28,15 @@ export interface IBookRepository extends IBaseRepository<IBookDocument> {
         sortOptions: any
     ): Promise<{ book: IBookDocument[]; total: number }>
 
+    findbooks(
+        searchQuery: SearchBook,
+        skip: number,
+        limit: number,
+        sortOptions: any
+    ): Promise<{ book: IBookDocument[]; total: number }>
+
     // New Elasticsearch-specific methods
-    indexBook(book: IBookDocument): Promise<void>
+    indexBook(book: IBookDocument, userId: string): Promise<void>
 
     bookDelete(bookId: string): Promise<void>
 

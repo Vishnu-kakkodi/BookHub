@@ -22,7 +22,21 @@ export default function RootLayout({
           <nav className="bg-orange-200 shadow-md">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-16">
-                <p>BookHub</p>
+                <Link href="/home">
+                  <p style={{
+                    fontSize: '2rem',
+                    fontWeight: 'bold',
+                    color: '#4A90E2',
+                    textTransform: 'uppercase',
+                    letterSpacing: '2px',
+                    fontFamily: 'Arial, sans-serif',
+                    margin: '0',
+                    padding: '10px',
+                    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
+                  }}>
+                    BookHub
+                  </p>
+                </Link>
                 <Navigation />
               </div>
             </div>
@@ -49,32 +63,32 @@ const Navigation = () => {
     <div className="flex items-center">
       {isUserAuthenticated ? (
         <>
-         <Link
-        href="/search"
-        className="hover:text-blue-600 text-blue-500 px-4 py-2 rounded-md transition duration-300 ease-in-out"
-      >
-        Search
-      </Link>
-        <Link
-        href="/profile"
-        className="hover:text-blue-600 text-blue-500 px-4 py-2 rounded-md transition duration-300 ease-in-out"
-      >
-        Profile
-      </Link>
-      <Link
-        href="/my-books"
-        className="hover:text-blue-600 text-blue-500 px-4 py-2 rounded-md transition duration-300 ease-in-out"
-      >
-        My Books
-      </Link>
-      <button
-        onClick={handleLogout}
-        className="ml-4 hover:text-red-600 text-red-500 px-4 py-2 rounded-md transition duration-300 ease-in-out"
-      >
-        Logout
-      </button>
-      </>
-      
+          <Link
+            href="/search"
+            className="hover:text-blue-600 text-blue-500 px-4 py-2 rounded-md transition duration-300 ease-in-out"
+          >
+            Search
+          </Link>
+          <Link
+            href="/profile"
+            className="hover:text-blue-600 text-blue-500 px-4 py-2 rounded-md transition duration-300 ease-in-out"
+          >
+            Profile
+          </Link>
+          <Link
+            href="/my-books"
+            className="hover:text-blue-600 text-blue-500 px-4 py-2 rounded-md transition duration-300 ease-in-out"
+          >
+            My Books
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="ml-4 hover:text-red-600 text-red-500 px-4 py-2 rounded-md transition duration-300 ease-in-out"
+          >
+            Logout
+          </button>
+        </>
+
       ) : (
         <Link
           href="/login"

@@ -116,13 +116,40 @@ export class controller {
     ): Promise<void> => {
         try {
             const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 4;
+            const limit = parseInt(req.query.limit as string) || 2;
             const search = (req.query.search as string);
             const filter = (req.query.filter as string);
             const sort = (req.query.sort as string);
             console.log(search,"S");
             console.log("sss")
             const {book,total} = await this.service.bookList(page,limit,search,filter,sort);
+            console.log(total,"total")
+            res.status(201).json({
+                book,
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            });
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    public myBookList = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        try {
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 4;
+            const search = (req.query.search as string);
+            const filter = (req.query.filter as string);
+            const sort = (req.query.sort as string);
+            const userId = (req.query.userId as string);
+            console.log(userId,"ooo")
+            const {book,total} = await this.service.myBookList(page,limit,search,filter,sort,userId);
             res.status(201).json({
                 book,
                 total,
@@ -174,6 +201,30 @@ export class controller {
             });
         } catch (error) {
             next(error);
+        }
+    }
+
+    async profilePhoto(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> {
+        try {
+            console.log("Hai");
+            let fileLocation = (req.file as any).location;
+            const userId: string | null = req.body.userId;
+            console.log(userId,"UserId");
+            const user = await this.service.profilePhoto(userId, fileLocation);
+            if (!user) {
+                throw new HttpException(STATUS_CODES.NOT_FOUND, MESSAGES.ERROR.DATA_NOTFOUND)
+            }
+            res.status(200).json({
+                status: STATUS_CODES.SUCCESS,
+                message: MESSAGES.SUCCESS.DATA_RETRIEVED,
+                data: user
+            });
+        } catch (error) {
+            next(error)
         }
     }
 

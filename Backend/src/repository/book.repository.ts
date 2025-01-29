@@ -1,78 +1,10 @@
-// import { BaseRepository } from "./base.repository";
-// import { UserModel } from "../modal/userModel";
-// import { IUserDocument } from "../types/userType";
-// import { HttpException } from "../middleware/error.middleware";
-// import mongoose, { FilterQuery } from 'mongoose';
-// import { IUserRepository } from "../interfaces/IUserRepository";
-// import { IBookDocument } from "../types/bookType";
-// import { BookModel } from "../modal/bookModel";
-// import { IBookRepository } from "../interfaces/IBookRepository";
-
-// interface UpdateProfileData {
-//     userName?: string;
-//     phoneNumber?: string;
-//     address?: string;
-//     [key: string]: any;  
-// }
-
-// export type SearchQueryType = FilterQuery<{
-//     userName: string;
-//     email: string;
-//     phoneNumber: string;
-//     quizProgress:{
-//         rank:number;
-//     }
-//   }>;
-
-//   export type SearchBook = FilterQuery<{
-//     title: string;
-// }>;
-
-
-// export class bookRepository extends BaseRepository<IBookDocument> implements IBookRepository {
-//     constructor(){
-//         super(BookModel);
-//     }
-
-//     async findByEmail(email: string): Promise <IUserDocument | null >{
-//         try{
-//             return await this.model.findOne({email});
-//         }catch(error){
-//             throw error;
-//         }
-//     } 
-
-//     async findbook(
-//         searchQuery: SearchBook,
-//         skip: number,
-//         limit: number,
-//         sortOptions: any = { createdAt: -1 }
-//     ): Promise<{ book: IBookDocument[]; total: number }> {
-//         try {
-//             const book = await this.model
-//                 .find()
-//                 .sort(sortOptions)
-//                 .skip(skip)
-//                 .limit(limit)
-
-//             const total: number = await this.model.countDocuments();
-
-//             return { book, total };
-//         } catch (error) {
-//             throw error;
-//         }
-//     }
-// }
-
-
 import { BaseRepository } from "./base.repository";
 import { BookModel } from "../modal/bookModel";
 import { IBookDocument } from "../types/bookType";
 import { IBookRepository, SearchBook } from "../interfaces/IBookRepository";
-import mongoose, { FilterQuery } from 'mongoose';
+import mongoose from 'mongoose';
 import ElasticsearchClient from '../ElasticsearchClient';
 import { Client } from '@elastic/elasticsearch';
-import e from "express";
 
 
 export class bookRepository extends BaseRepository<IBookDocument> implements IBookRepository {
@@ -85,14 +17,15 @@ export class bookRepository extends BaseRepository<IBookDocument> implements IBo
 
     async create(data: Partial<IBookDocument>): Promise<IBookDocument> {
         try {
-            // Create in MongoDB
             const book = await this.model.create(data);
             
-            // Ensure book is saved before indexing
             await book.save();
+
+            const userId = data.userId as string
+
+            console.log("Elastic Search started");
             
-            // Index in Elasticsearch
-            await this.indexBook(book);
+            await this.indexBook(book,userId);
             
             return book.toObject();
         } catch (error) {
@@ -101,9 +34,8 @@ export class bookRepository extends BaseRepository<IBookDocument> implements IBo
         }
     }
     
-    async indexBook(book: IBookDocument) {
+    async indexBook(book: IBookDocument, userId: string) {
         try {
-            // Ensure book and _id exist
             if (!book || !book._id) {
                 console.error('Invalid book object for indexing');
                 return;
@@ -111,10 +43,11 @@ export class bookRepository extends BaseRepository<IBookDocument> implements IBo
     
             await this.esClient.index({
                 index: 'books',
-                id: book._id.toString(), // Use _id instead of id
+                id: book._id.toString(), 
                 body: {
                     title: book.title,
-                    author: book.author, // Ensure this matches your schema
+                    userId: userId,
+                    author: book.author, 
                     createdAt: book.createdAt || new Date()
                 }
             });
@@ -130,27 +63,64 @@ export class bookRepository extends BaseRepository<IBookDocument> implements IBo
         sortOptions: any = { createdAt: -1 }
     ): Promise<{ book: IBookDocument[]; total: number }> {
         try {
-            // Add connection check
+            const client = this.esClient;
+            await client.info(); 
+    
+            const esResult = await client.search({
+                index: 'books',
+                body: {
+                    query: this.buildElasticsearchQuery(searchQuery),
+                    sort: [{ [Object.keys(sortOptions)[0]]: Object.values(sortOptions)[0] === -1 ? 'desc' : 'asc' }],
+                    from: skip,
+                    size: limit
+                }
+            });
+    
+            const bookIds = esResult.hits.hits.map((hit: any) => new mongoose.Types.ObjectId(hit._id));
+            const books = await BookModel.find({ _id: { $in: bookIds } });
+            const total =
+            esResult.hits.total &&
+            (typeof esResult.hits.total === 'number'
+                ? esResult.hits.total
+                : esResult.hits.total.value) || 0;
+            console.log("Elastic search working")
+            return { book: books, total };
+        } catch (error) {
+            console.error('Elasticsearch search error:', error);
             return this.fallbackMongoSearch(searchQuery, skip, limit, sortOptions);
+        }
+    }
 
-            // const client = this.esClient;
-            // await client.info(); // Verify connection before search
+    async findbooks(
+        searchQuery: SearchBook,
+        skip: number,
+        limit: number,
+        sortOptions: any = { createdAt: -1 }
+    ): Promise<{ book: IBookDocument[]; total: number }> {
+        try {
+            const client = this.esClient;
+            await client.info(); 
     
-            // const esResult = await client.search({
-            //     index: 'books',
-            //     body: {
-            //         query: this.buildElasticsearchQuery(searchQuery),
-            //         sort: [{ [Object.keys(sortOptions)[0]]: Object.values(sortOptions)[0] === -1 ? 'desc' : 'asc' }],
-            //         from: skip,
-            //         size: limit
-            //     }
-            // });
+            const esResult = await client.search({
+                index: 'books',
+                body: {
+                    query: this.buildElasticsearchQuery(searchQuery),
+                    sort: [{ [Object.keys(sortOptions)[0]]: Object.values(sortOptions)[0] === -1 ? 'desc' : 'asc' }],
+                    from: skip,
+                    size: limit
+                }
+            });
     
-            // const bookIds = esResult.hits.hits.map((hit: any) => new mongoose.Types.ObjectId(hit._id));
-            // const books = await BookModel.find({ _id: { $in: bookIds } });
-            // const total = esResult.hits.total as number;
-    
-            // return { book: books, total };
+            const bookIds = esResult.hits.hits.map((hit: any) => new mongoose.Types.ObjectId(hit._id));
+            const books = await BookModel.find({ _id: { $in: bookIds } });
+            const total =
+            esResult.hits.total &&
+            (typeof esResult.hits.total === 'number'
+                ? esResult.hits.total
+                : esResult.hits.total.value) || 0;
+                
+            console.log("Elastic search working")
+            return { book: books, total };
         } catch (error) {
             console.error('Elasticsearch search error:', error);
             return this.fallbackMongoSearch(searchQuery, skip, limit, sortOptions);
@@ -178,27 +148,65 @@ export class bookRepository extends BaseRepository<IBookDocument> implements IBo
         return { book, total };
     }
 
+    // private buildElasticsearchQuery(mongoQuery: any) {
+    //     const esQuery: any = { bool: { must: [] } };
+
+    //     if (mongoQuery.$or) {
+    //         const shouldClauses = mongoQuery.$or.map((clause: any) => {
+    //             if (clause.title) return { match: { title: clause.title.$regex.replace(/\//g, '') } };
+    //             if (clause.department) return { match: { department: clause.department.$regex.replace(/\//g, '') } };
+    //             if (clause.instructor) return { match: { instructor: clause.instructor.$regex.replace(/\//g, '') } };
+    //         });
+    //         esQuery.bool.should = shouldClauses;
+    //         esQuery.bool.minimum_should_match = 1;
+    //     }
+
+    //     if (mongoQuery.department) {
+    //         esQuery.bool.must.push({
+    //             terms: { department: mongoQuery.department.$in }
+    //         });
+    //     }
+
+    //     return esQuery;
+    // }
+
     private buildElasticsearchQuery(mongoQuery: any) {
         const esQuery: any = { bool: { must: [] } };
-
+    
+        // Handle $or queries (should clauses)
         if (mongoQuery.$or) {
             const shouldClauses = mongoQuery.$or.map((clause: any) => {
-                if (clause.title) return { match: { title: clause.title.$regex.replace(/\//g, '') } };
-                if (clause.department) return { match: { department: clause.department.$regex.replace(/\//g, '') } };
-                if (clause.instructor) return { match: { instructor: clause.instructor.$regex.replace(/\//g, '') } };
+                if (clause.title) {
+                    return { match: { title: clause.title.$regex.replace(/\//g, '') } };
+                }
+                if (clause.department) {
+                    return { match: { department: clause.department.$regex.replace(/\//g, '') } };
+                }
+                if (clause.instructor) {
+                    return { match: { instructor: clause.instructor.$regex.replace(/\//g, '') } };
+                }
             });
             esQuery.bool.should = shouldClauses;
             esQuery.bool.minimum_should_match = 1;
         }
-
+    
+        // Handle department condition
         if (mongoQuery.department) {
             esQuery.bool.must.push({
                 terms: { department: mongoQuery.department.$in }
             });
         }
-
+    
+        // Handle userId condition
+        if (mongoQuery.userId) {
+            esQuery.bool.must.push({
+                term: { userId: mongoQuery.userId }
+            });
+        }
+    
         return esQuery;
     }
+    
 
 
     async bookDelete(bookId: string): Promise<void> {
@@ -207,43 +215,56 @@ export class bookRepository extends BaseRepository<IBookDocument> implements IBo
     
             await this.model.findByIdAndDelete(bookObjectId);
     
-            return; 
+            await this.esClient.delete({
+                index: 'books',
+                id: bookId,
+            });
+    
+            console.log(`Book with ID ${bookId} deleted from Elasticsearch`);
         } catch (error) {
-            throw error; 
-        }
-    }
-
-
-    async updateBook(bookData: any, bookId: string): Promise<any | null> {
-        try {
-            const id = new mongoose.Types.ObjectId(bookId)
-            const existingBook = await this.model.findById(id);
-            console.log(existingBook,"E")
-            console.log(bookData);
-            if (!existingBook) {
-                return null;
-            }
-            if (bookData.title) {
-                existingBook.title = bookData.title
-            }
-            if (bookData.author) {
-                existingBook.author = bookData.author
-            }
-            if (bookData.description) {
-                existingBook.description = bookData.description
-            }
-            if (bookData.genre) {
-                existingBook.genre = bookData.genre
-            }
-
-            if (bookData.isbn) {
-                existingBook.isbn = bookData.isbn;
-            }
-
-            return await existingBook.save();
-        } catch (error) {
+            console.error('Error deleting book:', error);
             throw error;
         }
     }
     
+
+
+    async updateBook(bookData: any, bookId: string): Promise<any | null> {
+        try {
+            const id = new mongoose.Types.ObjectId(bookId);
+            const existingBook = await this.model.findById(id);
+    
+            if (!existingBook) {
+                return null;
+            }
+    
+            if (bookData.title) existingBook.title = bookData.title;
+            if (bookData.author) existingBook.author = bookData.author;
+            if (bookData.description) existingBook.description = bookData.description;
+            if (bookData.genre) existingBook.genre = bookData.genre;
+            if (bookData.isbn) existingBook.isbn = bookData.isbn;
+    
+            const updatedBook = await existingBook.save();
+    
+            await this.esClient.update({
+                index: 'books',
+                id: bookId,
+                body: {
+                    doc: {
+                        title: updatedBook.title,
+                        author: updatedBook.author,
+                        description: updatedBook.description,
+                        genre: updatedBook.genre,
+                        isbn: updatedBook.isbn,
+                        updatedAt: updatedBook.updatedAt || new Date(),
+                    },
+                },
+            });
+    
+            return updatedBook;
+        } catch (error) {
+            console.error('Error updating book:', error);
+            throw error;
+        }
+    }  
 }

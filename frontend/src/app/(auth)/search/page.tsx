@@ -5,11 +5,12 @@ import { useBookListQuery } from "../../../store/slices/userSlice";
 import BookCard from "@/components/BookCard";
 import { Pagination } from "../../../components/Pagination";
 import useDebouncedValue from "@/hooks/debounceHook";
+import withAuth from "@/hoc/withAuth";
 
-export default function HomePage() {
+const Search = () => {
     const [page, setPage] = useState(1);
     // const [limit, setLimit] = useState(4);
-    const limit = 1;
+    const limit = 4;
     const [search, setSearch] = useState('');
     const debouncedSearchTerm = useDebouncedValue(search, 1000);
 
@@ -64,3 +65,5 @@ export default function HomePage() {
         </div>
     );
 }
+
+export default withAuth(Search)
