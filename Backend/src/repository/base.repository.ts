@@ -6,7 +6,7 @@ import MESSAGES from "../constants/message";
 import { IBaseRepository } from "../interfaces/IBaseRepository";
 
 export abstract class BaseRepository<T extends BaseInterface & Document> implements IBaseRepository<T>{
-    constructor(protected readonly model: Model<T & Document>) {}
+    constructor(protected readonly model: Model<Document & T>) {}
 
     async create(data: Partial<T>): Promise<T> {
         try {
