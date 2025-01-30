@@ -26,7 +26,8 @@ export interface IBookRepository extends IBaseRepository<IBookDocument> {
         skip: number,
         limit: number,
         sortOptions: any
-    ): Promise<{ book: IBookDocument[]; total: number }>
+    ): Promise<{ book: IBookDocument[]; total: number }>;
+    
 
     // findbooks(
     //     searchQuery: SearchBook,
