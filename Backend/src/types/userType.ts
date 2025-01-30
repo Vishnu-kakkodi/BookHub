@@ -13,6 +13,7 @@ export enum UserStatus {
 
 export interface IUser extends BaseInterface{
     id:string;
+    userName: string;
     email: string;
     password: string;
     profilePhoto?: string;

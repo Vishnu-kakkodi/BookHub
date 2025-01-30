@@ -20,9 +20,8 @@ export class controller {
     ): Promise<void> {
         try {
             console.log("Hai")
-            const { email, password } = req.body;
-            console.log(email,password)
-            const user = await this.service.register(email,password);
+            const { email, password, userName } = req.body;
+            const user = await this.service.register(email,password,userName);
             if (!user) {
                 res.json({STATUS:STATUS_CODES.UNAUTHORIZED,MESSAGE:MESSAGES.ERROR.UNAUTHORIZED});
             }

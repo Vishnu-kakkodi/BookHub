@@ -91,41 +91,41 @@ export class bookRepository extends BaseRepository<IBookDocument> implements IBo
         }
     }
 
-    async findbooks(
-        searchQuery: SearchBook,
-        skip: number,
-        limit: number,
-        sortOptions: any = { createdAt: -1 }
-    ): Promise<{ book: IBookDocument[]; total: number }> {
-        try {
-            const client = this.esClient;
-            await client.info(); 
+    // async findbooks(
+    //     searchQuery: SearchBook,
+    //     skip: number,
+    //     limit: number,
+    //     sortOptions: any = { createdAt: -1 }
+    // ): Promise<{ book: IBookDocument[]; total: number }> {
+    //     try {
+    //         const client = this.esClient;
+    //         await client.info(); 
     
-            const esResult = await client.search({
-                index: 'books',
-                body: {
-                    query: this.buildElasticsearchQuery(searchQuery),
-                    sort: [{ [Object.keys(sortOptions)[0]]: Object.values(sortOptions)[0] === -1 ? 'desc' : 'asc' }],
-                    from: skip,
-                    size: limit
-                }
-            });
+    //         const esResult = await client.search({
+    //             index: 'books',
+    //             body: {
+    //                 query: this.buildElasticsearchQuery(searchQuery),
+    //                 sort: [{ [Object.keys(sortOptions)[0]]: Object.values(sortOptions)[0] === -1 ? 'desc' : 'asc' }],
+    //                 from: skip,
+    //                 size: limit
+    //             }
+    //         });
     
-            const bookIds = esResult.hits.hits.map((hit: any) => new mongoose.Types.ObjectId(hit._id));
-            const books = await BookModel.find({ _id: { $in: bookIds } });
-            const total =
-            esResult.hits.total &&
-            (typeof esResult.hits.total === 'number'
-                ? esResult.hits.total
-                : esResult.hits.total.value) || 0;
+    //         const bookIds = esResult.hits.hits.map((hit: any) => new mongoose.Types.ObjectId(hit._id));
+    //         const books = await BookModel.find({ _id: { $in: bookIds } });
+    //         const total =
+    //         esResult.hits.total &&
+    //         (typeof esResult.hits.total === 'number'
+    //             ? esResult.hits.total
+    //             : esResult.hits.total.value) || 0;
                 
-            console.log("Elastic search working")
-            return { book: books, total };
-        } catch (error) {
-            console.error('Elasticsearch search error:', error);
-            return this.fallbackMongoSearch(searchQuery, skip, limit, sortOptions);
-        }
-    }
+    //         console.log("Elastic search working")
+    //         return { book: books, total };
+    //     } catch (error) {
+    //         console.error('Elasticsearch search error:', error);
+    //         return this.fallbackMongoSearch(searchQuery, skip, limit, sortOptions);
+    //     }
+    // }
 
     private async fallbackMongoSearch(searchQuery: SearchBook,skip: number, limit: number, sortOptions: any): Promise<{ book: IBookDocument[]; total: number }> {
         console.log(searchQuery,"Search");

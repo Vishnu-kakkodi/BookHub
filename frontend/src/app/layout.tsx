@@ -22,21 +22,7 @@ export default function RootLayout({
           <nav className="bg-orange-200 shadow-md">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-16">
-                <Link href="/home">
-                  <p style={{
-                    fontSize: '2rem',
-                    fontWeight: 'bold',
-                    color: '#4A90E2',
-                    textTransform: 'uppercase',
-                    letterSpacing: '2px',
-                    fontFamily: 'Arial, sans-serif',
-                    margin: '0',
-                    padding: '10px',
-                    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
-                  }}>
-                    BookHub
-                  </p>
-                </Link>
+                <LogoLink/>
                 <Navigation />
               </div>
             </div>
@@ -47,6 +33,28 @@ export default function RootLayout({
     </Provider>
   );
 }
+
+const LogoLink = () => {
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isUserAuthenticated);
+  
+  return (
+    <Link href={isAuthenticated ? '/home' : '/'}>
+      <p style={{
+        fontSize: '2rem',
+        fontWeight: 'bold',
+        color: '#4A90E2',
+        textTransform: 'uppercase',
+        letterSpacing: '2px',
+        fontFamily: 'Arial, sans-serif',
+        margin: '0',
+        padding: '10px',
+        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
+      }}>
+        BookHub
+      </p>
+    </Link>
+  );
+};
 
 // Separate navigation component to access Redux state
 const Navigation = () => {

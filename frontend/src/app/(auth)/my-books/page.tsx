@@ -313,7 +313,7 @@ const MyBooksSection = () => {
                                         <img
                                             src={book.thumbnail}
                                             alt={book.title}
-                                            className="w-full h-48 object-cover rounded-t-lg"
+                                            className="w-full h-48 object-fit rounded-t-lg"
                                         />
                                     ) : (
                                         <div className="w-full h-48 bg-muted flex items-center justify-center rounded-t-lg">

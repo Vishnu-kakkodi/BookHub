@@ -18,6 +18,7 @@ interface FileEvent extends React.ChangeEvent<HTMLInputElement> {
 
 const ProfileSection = () => {
   const userdata = useAppSelector((state) => state.auth.userInfo);
+  console.log(userdata?.userName)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);

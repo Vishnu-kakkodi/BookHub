@@ -4,7 +4,7 @@ import { IUserDocument } from "../types/userType"
 
 
 export interface IService{
-    register(email: string, password: string): Promise<any>
+    register(email: string, password: string, username: string): Promise<any>
     login(email: string, password: string): Promise<IUserDocument | null>
     googleSign(email: string, userName: string, phoneNumber: string): Promise<any | null>
     createBook(bookData: any): Promise<any>

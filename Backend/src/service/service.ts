@@ -25,11 +25,12 @@ class Service implements IService {
         this.bookRepository = bookRepository;
      }
 
-    async register(email:string, password: string): Promise<any> {
+    async register(email:string, password: string, userName: string): Promise<any> {
         try {
             const hashPassword = await PasswordUtils.hashPassword(password);
 
             const data = {
+                userName:userName,
                 email: email,
                 password: hashPassword
             }
@@ -44,6 +45,8 @@ class Service implements IService {
     async googleSign(email: string, userName: string, phoneNumber: string): Promise<any | null> {
         try {
             const user = await this.userRepository.findByEmail(email)
+
+            console.log(user);
 
             if (!user) {
                 const hashPassword = await PasswordUtils.hashPassword(userName+"@123");

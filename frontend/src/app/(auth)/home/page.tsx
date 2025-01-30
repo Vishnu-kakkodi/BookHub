@@ -5,22 +5,25 @@ import { store } from "../../../store/index"; // Make sure the store is imported
 import BookCard from "../../../components/BookCard";
 import { useBookListQuery } from "@/store/slices/userSlice";
 import withAuth from "@/hoc/withAuth";
+import { Pagination } from "@/components/Pagination";
+import { useState } from "react";
 
 
-const HomePage = () =>{
+const HomePage = () => {
 
 
-    // const [page, setPage] = useState(1);
-    // const [limit, setLimit] = useState(8);
-    const limit = 8;
-    const page = 1;
-    
-    const {
-      data: bookData,
-    } = useBookListQuery({ page, limit });
-  
-    const books = bookData?.book || [];
-  
+  const [page, setPage] = useState(1);
+  // const [limit, setLimit] = useState(4);
+  const limit = 4;
+
+  const {
+    data: bookData,
+  } = useBookListQuery({ page, limit });
+
+  const books = bookData?.book || [];
+  const totalPages = bookData?.totalPages || 1;
+
+
 
   return (
     <Provider store={store}>
@@ -31,8 +34,9 @@ const HomePage = () =>{
         <p className="text-xl text-center text-gray-600 mb-8">
           Discover amazing books and manage your reading list.
         </p>
+        <>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {books.map((book:any) => (
+          {books.map((book: any) => (
             <BookCard
               key={book.isbn}
               title={book.title}
@@ -42,6 +46,12 @@ const HomePage = () =>{
             />
           ))}
         </div>
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
+        </>
       </div>
     </Provider>
   );

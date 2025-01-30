@@ -16,6 +16,8 @@ import { useGoogleSignMutation, useRegisterMutation } from '@/store/slices/userS
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '@/store/slices/authSlice';
 import withAuth from '@/hoc/withAuth';
+import backIMg from '../../../../public/library-book-bookshelf-read-thumbnail.jpg'
+
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -41,8 +43,8 @@ const RegisterPage = () => {
   });
 
   const handleSubmit = async (
-    values: { email: string; password: string; confirmPassword: string }, 
-    { setSubmitting, setErrors }: FormikHelpers<{ email: string; password: string; confirmPassword: string }>
+    values: { userName: string; email: string; password: string; confirmPassword: string }, 
+    { setSubmitting, setErrors }: FormikHelpers<{ userName: string, email: string; password: string; confirmPassword: string }>
   ) => {
     try {
       const response = await register(values).unwrap();
@@ -76,17 +78,38 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4"
+    style={{
+      backgroundImage: `url(${backIMg.src})`, // Fix: Use template literal and access .src property
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backgroundBlendMode: 'overlay' // Fixed property name
+    }}
+    >
       <div className="w-full max-w-md bg-white rounded-xl shadow-2xl p-8">
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Sign Up</h2>
         
         <Formik
-          initialValues={{ email: '', password: '', confirmPassword: '' }}
+          initialValues={{ userName: '', email: '', password: '', confirmPassword: '' }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
             <Form className="space-y-4">
+              <div>
+                <label htmlFor="userName" className="block text-gray-700 font-semibold mb-2">
+                  Name
+                </label>
+                <Field
+                  type="userName"
+                  name="userName"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <ErrorMessage 
+                  name="userName" 
+                  component="div" 
+                  className="text-red-500 text-sm mt-1" 
+                />
+              </div>
               <div>
                 <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
                   Email
