@@ -21,7 +21,7 @@ app.use((0, cors_1.default)({
     maxAge: 86400
 }));
 app.use(express_1.default.json());
-app.use('/', routes_1.default);
+app.use('/api/users', routes_1.default);
 mongoose_1.default.connect('mongodb://localhost:27017/bookhub')
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.error('MongoDB connection:', err));

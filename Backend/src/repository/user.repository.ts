@@ -52,7 +52,7 @@ import { IUserDocument } from "../types/userType";
 import { IUserRepository } from "../interfaces/IUserRepository";
 import { BaseRepository } from "./base.repository";
 
-export class UserRepository extends BaseRepository<IUserDocument> implements IUserRepository {
+export class userRepository extends BaseRepository<IUserDocument> implements IUserRepository {
     constructor() {
         super(UserModel as Model<IUserDocument>);
     }

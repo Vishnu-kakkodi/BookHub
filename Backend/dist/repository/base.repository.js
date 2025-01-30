@@ -1,12 +1,12 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+// import { Model, HydratedDocument, Types, FilterQuery } from "mongoose";
+// import { BaseInterface } from "../types/baseType";
+// import { HttpException } from "../middleware/error.middleware";
+// import STATUS_CODES from "../constants/statusCode";
+// import MESSAGES from "../constants/message";
+// import { IBaseRepository } from "../interfaces/IBaseRepository";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseRepository = void 0;
-const error_middleware_1 = require("../middleware/error.middleware");
-const statusCode_1 = __importDefault(require("../constants/statusCode"));
-const message_1 = __importDefault(require("../constants/message"));
 class BaseRepository {
     constructor(model) {
         this.model = model;
@@ -17,13 +17,7 @@ class BaseRepository {
             return item.toObject();
         }
         catch (error) {
-            console.error(error, "Error occurred during creation");
-            if (error.name === "ValidationError") {
-                throw new Error("Validation failed for the provided data.");
-            }
-            if (error.code === 11000) {
-                throw new error_middleware_1.HttpException(statusCode_1.default.CONFLICT, message_1.default.ERROR.EMAIL_ALREADY_EXISTS);
-            }
+            console.error("Error occurred during creation:", error);
             throw new Error("An unexpected error occurred during creation.");
         }
     }
