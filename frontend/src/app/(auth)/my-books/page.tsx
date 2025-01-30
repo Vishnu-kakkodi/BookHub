@@ -136,6 +136,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { useAppSelector } from '@/store/hook';
 import { Pagination } from '@/components/Pagination';
 import withAuth from '@/hoc/withAuth';
+import { BookType } from '@/types/bookTypes';
 
 const MyBooksSection = () => {
     const limit = 4;
@@ -303,7 +304,7 @@ const MyBooksSection = () => {
                     </Card>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {books.map((book: any, index: number) => (
+                        {books.map((book: BookType, index: number) => (
                             <Card
                                 key={`book-${book._id || book.isbn || index}`}
                                 className="group hover:shadow-lg transition-shadow duration-200"
@@ -366,7 +367,7 @@ const MyBooksSection = () => {
                                             <AlertDialogFooter>
                                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                                 <AlertDialogAction
-                                                    onClick={() => handleDelete(book._id)}
+                                                    onClick={() => handleDelete(book.id)}
                                                     className="bg-red-500 hover:bg-red-600"
                                                 >
                                                     Delete

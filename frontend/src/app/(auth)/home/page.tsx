@@ -7,6 +7,7 @@ import { useBookListQuery } from "@/store/slices/userSlice";
 import withAuth from "@/hoc/withAuth";
 import { Pagination } from "@/components/Pagination";
 import { useState } from "react";
+import { BookType } from "@/types/bookTypes";
 
 
 const HomePage = () => {
@@ -36,7 +37,7 @@ const HomePage = () => {
         </p>
         <>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {books.map((book: any) => (
+          {books.map((book: BookType) => (
             <BookCard
               key={book.isbn}
               title={book.title}

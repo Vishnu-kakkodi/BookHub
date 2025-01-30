@@ -1,12 +1,22 @@
 import React, { useEffect, useRef } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useUpdateBookMutation } from '@/store/slices/userSlice';
+import { BookType } from '@/types/bookTypes';
+
+// Define form values type
+interface BookFormValues {
+  title: string;
+  author: string;
+  description: string;
+  genre: string;
+  isbn: string;
+}
 
 interface BookEditModalProps {
-  book: any;
+  book: BookType;
   onClose: () => void;
 }
 
@@ -53,7 +63,10 @@ const BookEditModal: React.FC<BookEditModalProps> = ({ book, onClose }) => {
     };
   }, [onClose]);
 
-  const handleSubmit = async (values: any, { setSubmitting }: any) => {
+  const handleSubmit = async (
+    values: BookFormValues,
+    { setSubmitting }: FormikHelpers<BookFormValues>
+  ): Promise<void> => {
     try {
       await updateBook({
         id: book._id,
@@ -93,7 +106,7 @@ const BookEditModal: React.FC<BookEditModalProps> = ({ book, onClose }) => {
 
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">Edit Book</h2>
           
-          <Formik
+          <Formik<BookFormValues>
             initialValues={{
               title: book.title || '',
               author: book.author || '',
@@ -216,192 +229,3 @@ const BookEditModal: React.FC<BookEditModalProps> = ({ book, onClose }) => {
 };
 
 export default BookEditModal;
-
-
-
-
-
-// import React from 'react';
-// import { Formik, Form, Field, ErrorMessage } from 'formik';
-// import * as Yup from 'yup';
-// import { toast } from 'react-toastify';
-// import { useUpdateBookMutation } from '@/store/slices/userSlice';
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogHeader,
-//   DialogTitle,
-// } from "../components/ui/dialog";
-// import { Button } from "@/components/ui/button";
-// import { Input } from "../components/ui/input";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "../components/ui/select";
-// import { Label } from "../components/ui/label";
-
-// interface BookEditModalProps {
-//   book: any;
-//   onClose: () => void;
-// }
-
-// const BookEditModal: React.FC<BookEditModalProps> = ({ book, onClose }) => {
-//   const [updateBook] = useUpdateBookMutation();
-
-//   const validationSchema = Yup.object().shape({
-//     title: Yup.string().required('Title is required'),
-//     author: Yup.string().required('Author is required'),
-//     description: Yup.string(),
-//     genre: Yup.string(),
-//     isbn: Yup.string(),
-//   });
-
-//   const handleSubmit = async (values: any, { setSubmitting }: any) => {
-//     try {
-//       await updateBook({
-//         id: book._id,
-//         values
-//       });
-//       toast.success('Book updated successfully');
-//       onClose();
-//     } catch (error) {
-//       toast.error('Failed to update book');
-//       console.error(error);
-//     } finally {
-//       setSubmitting(false);
-//     }
-//   };
-
-//   return (
-//     <Dialog open={true} onOpenChange={onClose}>
-//       <DialogContent className="sm:max-w-[500px]">
-//         <DialogHeader>
-//           <DialogTitle>Edit Book</DialogTitle>
-//         </DialogHeader>
-        
-//         <Formik
-//           initialValues={{
-//             title: book.title || '',
-//             author: book.author || '',
-//             description: book.description || '',
-//             genre: book.genre || '',
-//             isbn: book.isbn || '',
-//           }}
-//           validationSchema={validationSchema}
-//           onSubmit={handleSubmit}
-//         >
-//           {({ isSubmitting, setFieldValue, values }) => (
-//             <Form className="space-y-4">
-//               <div className="space-y-2">
-//                 <Label htmlFor="title">Title</Label>
-//                 <Field
-//                   as={Input}
-//                   id="title"
-//                   name="title"
-//                   placeholder="Enter book title"
-//                 />
-//                 <ErrorMessage 
-//                   name="title" 
-//                   component="div" 
-//                   className="text-red-500 text-sm" 
-//                 />
-//               </div>
-
-//               <div className="space-y-2">
-//                 <Label htmlFor="author">Author</Label>
-//                 <Field
-//                   as={Input}
-//                   id="author"
-//                   name="author"
-//                   placeholder="Enter author name"
-//                 />
-//                 <ErrorMessage 
-//                   name="author" 
-//                   component="div" 
-//                   className="text-red-500 text-sm" 
-//                 />
-//               </div>
-
-//               <div className="space-y-2">
-//                 <Label htmlFor="description">Description</Label>
-//                 <Field
-//                   as={Input}  // Fixed component reference
-//                   id="description"
-//                   name="description"
-//                   placeholder="Enter book description"
-//                   className="min-h-[100px]"
-//                 />
-//                 <ErrorMessage 
-//                   name="description" 
-//                   component="div" 
-//                   className="text-red-500 text-sm" 
-//                 />
-//               </div>
-
-//               <div className="space-y-2">
-//                 <Label htmlFor="genre">Genre</Label>
-//                 <Select
-//                   onValueChange={(value:any) => setFieldValue('genre', value)}
-//                   defaultValue={values.genre}
-//                 >
-//                   <SelectTrigger>
-//                     <SelectValue placeholder="Select genre" />
-//                   </SelectTrigger>
-//                   <SelectContent>
-//                     <SelectItem value="Fiction">Fiction</SelectItem>
-//                     <SelectItem value="Non-Fiction">Non-Fiction</SelectItem>
-//                     <SelectItem value="Science Fiction">Science Fiction</SelectItem>
-//                     <SelectItem value="Mystery">Mystery</SelectItem>
-//                     <SelectItem value="Romance">Romance</SelectItem>
-//                     <SelectItem value="Thriller">Thriller</SelectItem>
-//                   </SelectContent>
-//                 </Select>
-//                 <ErrorMessage 
-//                   name="genre" 
-//                   component="div" 
-//                   className="text-red-500 text-sm" 
-//                 />
-//               </div>
-
-//               <div className="space-y-2">
-//                 <Label htmlFor="isbn">ISBN</Label>
-//                 <Field
-//                   as={Input}
-//                   id="isbn"
-//                   name="isbn"
-//                   placeholder="Enter ISBN"
-//                 />
-//                 <ErrorMessage 
-//                   name="isbn" 
-//                   component="div" 
-//                   className="text-red-500 text-sm" 
-//                 />
-//               </div>
-
-//               <div className="flex justify-end space-x-2 pt-4">
-//                 <Button
-//                   type="button"
-//                   variant="outline"
-//                   onClick={onClose}
-//                 >
-//                   Cancel
-//                 </Button>
-//                 <Button
-//                   type="submit"
-//                   disabled={isSubmitting}
-//                 >
-//                   {isSubmitting ? 'Saving...' : 'Save Changes'}
-//                 </Button>
-//               </div>
-//             </Form>
-//           )}
-//         </Formik>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// };
-
-// export default BookEditModal;
